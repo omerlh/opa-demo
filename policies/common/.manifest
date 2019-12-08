@@ -1,0 +1,4 @@
+{
+  "revision" : "",
+  "roots": ["system/authz", "common/service2service"]
+}

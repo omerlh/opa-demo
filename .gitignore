@@ -1,0 +1,3 @@
+oauth/bin/**
+oauth/obj/**
+client/node_modules/**

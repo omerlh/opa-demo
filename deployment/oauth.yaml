@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth-server
+  labels:
+    app: oauth-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth-server
+  template:
+    metadata:
+      labels:
+        app: oauth-server
+    spec:
+      containers:
+      - name: oauth-server
+        image: quay.io/omerlh/oauth-server:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9999
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth-server
+spec:
+  selector:
+    app: oauth-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9999

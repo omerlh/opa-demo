@@ -1,0 +1,4 @@
+{
+  "revision" : "",
+  "roots": ["authorization/rest", "services"]
+}

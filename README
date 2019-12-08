@@ -1,0 +1,1 @@
+kubectl cp dist/service-a.tar.gz minio-5d4fd568c6-s4bc6:/storage/bundles
