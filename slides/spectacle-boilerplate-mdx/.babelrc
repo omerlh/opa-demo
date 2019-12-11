@@ -1,0 +1,35 @@
+{
+  "presets": [
+    [ "es2015", { "loose": true, "modules" : false } ],
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    "react-hot-loader/babel",
+    "transform-decorators-legacy",
+    ["prismjs", {
+      "languages": ["javascript", "css", "html", "markup-templating"],
+      "plugins": ["line-numbers", "show-language"],
+      "theme": "okaidia",
+      "css": true
+    }]
+  ],
+  "env": {
+    "production": {
+      "plugins": [
+        "transform-es2015-modules-commonjs",
+        "transform-react-remove-prop-types",
+        "transform-react-constant-elements",
+        "transform-react-inline-elements",
+        "transform-runtime",
+        "transform-decorators-legacy",
+        "emotion"
+      ]
+    },
+    "test": {
+      "plugins": [
+        "transform-es2015-modules-commonjs"
+      ]
+    }
+  }
+}

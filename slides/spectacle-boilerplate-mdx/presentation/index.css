@@ -1,0 +1,10 @@
+.react-live-dark pre.prism-code {
+  background: black !important;
+  height: 600px
+}
+
+highlight-line {
+  background-color: rgba(160, 160, 160, 0.1);
+  margin: 0 -0.75rem;
+  padding: 0 0.75rem;
+}

@@ -1,5 +1,4 @@
 oauth/bin/**
 oauth/obj/**
-client/node_modules/**
-slides/node_modules/**
+**/node_modules/**
 dist/**

@@ -1,0 +1,372 @@
+import {Cite, Image, Markdown, Appear} from 'spectacle';
+import {DarkSlide, CodeSlide} from './slides';
+import { MDXProvider } from '@mdx-js/tag'
+import RegularComponent from './regular-component';
+import DeploymentListContainer from './deployment-list-container';
+import DeploymentViewContainer from './deployment-view-container';
+import DeployKubernetesObjectContainer from './deploy-kubernetes-object';
+import GetAwesomeServiceResponse from './get-awesome-service-response';
+import code from 'raw-loader!../assets/deck.example';
+import envoyAuth from 'raw-loader!../assets/envoy-auth.example';
+import PrismCode from './prism-code';
+
+# Solving Trust Issues at Scale
+
+**Building Authorization System That Developer Don't Hate**
+
+***Omer Levi Hevroni, Soluto by Asurion***
+
+***DevOpsDays Tel Aviv 2019***
+
+---
+
+![train](./train.jpg)
+
+---
+
+![secret](./secret.png)
+
+---
+
+![sheldon](https://media.giphy.com/media/11WKegmRmjz3qg/source.gif)
+
+---
+
+Post Mortem
+
+* Detection was manual - we need good tooling here (GitGurdian)
+* Our current authorization system is not good enough
+* Missing audit logs
+
+---
+
+# Hello
+
+<div style={{display: "flex", flexDirection: "row", justifyContent: "center",
+  alignItems: "center", width: "80%", margin: "auto"}}>
+<div>I'm a builder</div><Image src="me_kid.png" style={{width: "450px"}}/>
+</div>
+
+---
+
+## DevSecOps @ Soltuo by Asurion
+
+<Image src="me_alldaydevops.png" style={{width: "600px"}}/>
+
+---
+
+# The Authorization Problem
+
+---
+
+![soluto](soluto.png)
+ 
+---
+
+![soluto](services.png)
+ 
+---
+
+## The Fort Approach
+
+<Image src="fort.png"/>
+
+---
+
+![soluto](services.png)
+ 
+---
+
+## One horse can take down our fort...
+
+<Image src="trojan.jpg" style={{height: "400px"}}/>
+
+---
+
+## Challenges
+
+* One vulnerable service affects all the other
+* Ensuring all services are trust worthy is impossible
+* Need to narrow the blast radius
+
+<Image src="bomb.png" style={{width: "100px"}}/>
+
+---
+
+## The Onion Approach
+
+**A zero-trust architecture**
+
+<Image src="onion.png"/>
+
+---
+
+![soluto](services.png)
+ 
+---
+
+# Ideal Authorization System
+
+* Least Privilege (Zero Trust)
+* Secure by Default
+* Self Service (not blocking devs)
+* Scale accross hundred of services
+* Not too horible experience :)
+
+---
+
+![meme](./computer-say-no.png)
+
+---
+
+![danger](danger.jpg)
+
+Live Demo Ahead!
+
+---
+
+# Live slides
+
+* The slides are available on GitHub
+* The content is reflecting a live Kubernetes cluster
+* Follow the readme to run them locally
+* Easy to replicate on your own environment
+
+---
+
+export default DarkSlide
+
+<DeploymentListContainer/>
+
+---
+
+# Authentication Server
+
+* Issue auth tokens (JWT)
+* Provide public keys for token verification
+* Using Identity Server 4 for demo purposes
+
+---
+
+export default DarkSlide
+
+<DeploymentListContainer/>
+
+---
+
+# The oauth-client deployment
+
+---
+
+export default DarkSlide
+
+<DeploymentViewContainer/>
+
+---
+
+# The oauth-client container
+
+<PrismCode code={code} language="javascript" />
+
+---
+
+export default DarkSlide
+
+<DeploymentViewContainer/>
+
+---
+
+# The envoy container
+
+* Using Envoy Proxy as side car
+* Handle authentication and authorization
+* No code changes are required
+
+---
+
+# Envoy Config
+
+<PrismCode code={envoyAuth} language="javascript" />
+
+---
+
+export default DarkSlide
+
+<DeploymentViewContainer/>
+
+---
+
+# Meet Open Polict Agent
+
+* An open source policy system
+* Author policies using Rego DSL
+* Simple intergation
+* A CNCF Project
+
+---
+
+# A Zero Trust policy
+
+* Each service has list of allowed clients
+* Using GitFlow for requesting permissions
+* By default, no services are allowed
+
+---
+
+export default CodeSlide
+
+# Hello Rego
+
+```rego
+allow {
+  input["path"] = "/api/v1/products"
+  input["method"] = "GET"
+  input["token"]["sub"] = "client-1"
+}
+```
+
+---
+
+# Wait, everyone needs to learn rego? 
+
+<Image src='horror.png' style={{height: "500px"}}/>
+
+---
+
+# OPA data for the rescue
+
+* Data files are just JSON/YAML files
+* Consumed by policies
+* Allows us to create abstractions 
+
+---
+
+# Example data file 
+```json
+{
+  "clients": [
+    {
+      "client-id": "client-1",
+      "allowed-routes": [
+        {
+          "path": "api/v1/products",
+          "method": "GET"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+# Our improved policy:
+
+```rego
+
+import data.consumers
+
+allow {
+  input["path"] =  services[i].routes[j].path
+  input["method"] = services[i].routes[j].method
+  input["token"]["sub"] =  services[i].client_id
+}
+```
+
+---
+
+# Seperate responsabilities
+
+* Common policies authored by security team
+* Devs maintain their services JSON files
+* Request permissions is just a PR
+
+---
+
+# Looking back at our deployment...
+
+<DeploymentViewContainer/>
+
+---
+
+# Let's look at OPA config
+
+```yaml
+services:
+  - name: service-registry
+    url: http://minio:9000/
+discovery:
+  name: /discovery.tar.gz
+  prefix: bundles
+  decision: discovery.config
+labels:
+  platform: kubernetes
+  app: oauth-client
+  namespace: default
+  environment: production
+```
+
+---
+
+# OPA Discovery
+
+```rego
+package discovery
+
+config = {
+  "bundles": {
+    "common": {
+      "service": "service-registry",
+      "resource": "bundles/common.tar.gz"
+    },
+    "web-api": {
+      "service": "service-registry",
+      "resource": bundle_name
+    }
+  },
+  "decision_logs": {
+    "console": true
+  },
+  "plugins": {
+    "envoy_ext_authz_grpc": {
+      "addr": ":9191",
+      "query": "data.envoy.authz.allow"
+    }
+  }
+}
+
+bundle_name = sprintf("bundles/%s.tar.gz", [runtime_config.labels.app])
+```
+
+---
+
+export default DarkSlide
+
+# Minio?
+
+<DeploymentListContainer/>
+
+---
+
+# Minio
+
+* High performance object storage server 
+* Compatible with Amazon S3 APIs
+* Used for storing the policies in our demo
+* Production deployment can use S3 or Azure Blob
+
+---
+
+# Wrapping Up
+
+* Using OPA and Envoy for building a robust authoriation system
+* Simple set Up
+* Follow the readme to reproduce
+
+---
+
+# Questions?
+
+---
+
+# Thank you!

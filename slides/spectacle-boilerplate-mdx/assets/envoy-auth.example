@@ -1,0 +1,21 @@
+- name: envoy.filters.http.jwt_authn
+config: 
+    providers:
+    azure-ad:
+        issuer: http://localhost:5000
+        payload_in_metadata: jwt-metadata
+        audiences:
+        - api1
+        remote_jwks:
+        http_uri:
+            uri: http://localhost/.well-known/openid-configuration/jwks
+            cluster: identity-server
+        cache_duration:
+            seconds: 86400
+    rules:
+    - match:
+        prefix: /stats/prometheus
+    - match:
+        prefix: /
+        requires:
+        provider_name: identity-server
