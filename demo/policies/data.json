@@ -1,0 +1,13 @@
+{
+    "kids" : 
+    [
+        {
+            "name": "joe",
+            "candies_limit": 5
+        },
+        {
+            "name": "maya",
+            "candies_limit": 3
+        }
+    ]
+}
