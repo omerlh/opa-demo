@@ -1,51 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oauth-client
+  name: demo-server
   labels:
-    app: oauth-client
+    app: demo-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oauth-client
+      app: demo-server
   template:
     metadata:
       labels:
-        app: oauth-client
+        app: demo-server
     spec:
       containers:
-      - name: oauth-client
-        image: quay.io/omerlh/oauth-client:latest
+      - name: demo-server
+        image: quay.io/omerlh/demo-server:latest
       - name: "opa"
         image: openpolicyagent/opa:latest-istio
         args:
           - "run"
           - "--server"
           - "--config-file=/opa_data/config.yaml"
-          - "--addr=0.0.0.0:8081"
-          - "-l"
-          - "debug"
-        ports:
-          - containerPort: 8081
         volumeMounts:
         - name: opa-config
           mountPath: /opa_data
           readOnly: true
         securityContext:
           runAsUser: 1111
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /health?bundle=true
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 5
       - name: envoy
         image: envoyproxy/envoy:v1.12.1
         securityContext:
@@ -60,8 +43,6 @@ spec:
         - "envoy"
         - "--config-path"
         - "/config/envoy.yaml"
-        - "-l"
-        - "trace"
       volumes:
       - name: envoy-config
         configMap:
@@ -74,10 +55,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: oauth-client
+  name: demo-server
 spec:
   selector:
-    app: oauth-client
+    app: demo-server
   ports:
     - protocol: TCP
       port: 80
@@ -94,19 +75,14 @@ data:
     services:
       - name: service-registry
         url: http://minio:9000/
-    bundles:
-      web-api:
-        service: service-registry
-        resource: bundles/service-a.tar.gz
-      common:
-        service: service-registry
-        resource: bundles/common.tar.gz
-    plugins:
-        envoy_ext_authz_grpc:
-            addr: :9191
-            query: data.authorization.rest.allow
-            dry-run: false
-            enable-reflection: false
+    discovery:
+      name: /discovery.tar.gz
+      prefix: bundles
+      decision: discovery.config
+    labels:
+      platform: kubernetes
+      app: demo-server
+      namespace: default
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -143,8 +119,8 @@ data:
                       - name: envoy.filters.http.jwt_authn
                         config: 
                           providers:
-                            azure-ad:
-                              issuer: http://localhost:5000
+                            identity-server:
+                              issuer: http://oauth-server
                               payload_in_metadata: jwt-metadata
                               audiences:
                               - api1
@@ -160,7 +136,7 @@ data:
                             - match:
                                 prefix: /
                               requires:
-                                provider_name: azure-ad
+                                provider_name: identity-server
                       - name: envoy.ext_authz
                         config:
                           with_request_body:

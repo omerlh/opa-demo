@@ -1,0 +1,9 @@
+package rest.authz
+
+allow {
+  input["path"] = "/api/v1/products"
+  input["method"] = "GET"
+  input["token"]["sub"] = "client-1"
+}
+
+

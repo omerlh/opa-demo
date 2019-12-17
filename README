@@ -1,1 +1,34 @@
-kubectl cp dist/service-a.tar.gz minio-5d4fd568c6-s4bc6:/storage/bundles
+# OPA REST Authorization Demo
+
+## Repo structure
+
+* Demo - contains a short OPA demo, showing basic rego functionality. 
+To run, make sure you have OPA run in server mode with the policies, using:
+```
+opa run -s demo/policies
+```
+* oauth-server - issue tokens for the demo, based on IdentityServer
+* demo-server - dummy server written in NodeJS, used to demo authN/Z
+* policies - contains our authZ policies
+* bundle-uploader - script that bundle the policies
+* deployment - Kubernetes manifest files
+
+
+kubectl apply -f deployment/
+mkdir dist
+node bundle-packer/index.js 
+minio=$(kubectl get pods -l component=minio -o=jsonpath='{.items[0].metadata.name}')
+kubectl port-forward $minio 9000:9000
+mc config host add minio http://localhost:9000 minio minio123
+mc cp dist/ minio/bundles
+
+
+curl -X POST \
+  http://oauth-server/connect/token \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=client_credentials&client_id=client&client_secret=secret&scope=api1'
+
+curl -H "Authorization: Bearer <access token>" http://oauth-client/api/v1/sensitive
+
+curl -H "Authorization: Bearer <access token>" http://oauth-client/api/v2/sensitive
+

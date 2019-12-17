@@ -1,0 +1,28 @@
+{
+    "title": "My New Talk",       
+    "presenter": "Joel Lord",     
+    "date": "November 25, 2019",  
+    "conference": "This Event",  
+    "company": "Red Hat",         
+    "location": "Toronto, Canada",
+    "twitter": {                 
+      "presenter": "@joel__lord",
+      "event": "#EventHashtag"
+    },
+    "frame": {                    
+      "top": {                    
+        "center": "title"         
+      },
+      "bottom": {                
+        "left": ["twitter.presenter", "twitter.event"],
+        "center": "company"
+      }
+    },
+    "slides": [
+        {
+            "type": "terminal",
+            "title": "Terminal Inside The Terminal",
+            "text": "You can run some shell commands here. Try 'ls'."
+          }
+    ]                 
+  }

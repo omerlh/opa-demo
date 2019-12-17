@@ -1,0 +1,130 @@
+{
+    "decision_id": "37bcd9cd-931a-49e8-aef2-00adb48f1daf",
+    "input": {
+        "attributes": {
+            "destination": {
+                "address": {
+                    "Address": {
+                        "SocketAddress": {
+                            "PortSpecifier": {
+                                "PortValue": 8000
+                            },
+                            "address": "10.244.0.31"
+                        }
+                    }
+                }
+            },
+            "metadata_context": {
+                "filter_metadata": {
+                    "envoy.filters.http.jwt_authn": {
+                        "fields": {
+                            "jwt-metadata": {
+                                "Kind": {
+                                    "StructValue": {
+                                        "fields": {
+                                            "aud": {
+                                                "Kind": {
+                                                    "StringValue": "api1"
+                                                }
+                                            },
+                                            "client_id": {
+                                                "Kind": {
+                                                    "StringValue": "client"
+                                                }
+                                            },
+                                            "exp": {
+                                                "Kind": {
+                                                    "NumberValue": 1576592937
+                                                }
+                                            },
+                                            "iss": {
+                                                "Kind": {
+                                                    "StringValue": "http://oauth-server"
+                                                }
+                                            },
+                                            "nbf": {
+                                                "Kind": {
+                                                    "NumberValue": 1576589337
+                                                }
+                                            },
+                                            "scope": {
+                                                "Kind": {
+                                                    "ListValue": {
+                                                        "values": [
+                                                            {
+                                                                "Kind": {
+                                                                    "StringValue": "api1"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "request": {
+                "http": {
+                    "headers": {
+                        ":authority": "oauth-client",
+                        ":method": "GET",
+                        ":path": "/api/v1/sensitive",
+                        "accept": "*/*",
+                        "user-agent": "curl/7.67.0-DEV",
+                        "x-forwarded-proto": "http",
+                        "x-request-id": "b414be2e-aead-4377-b0fb-d55e1a5adb0b"
+                    },
+                    "host": "oauth-client",
+                    "id": "5520738655635140691",
+                    "method": "GET",
+                    "path": "/api/v1/sensitive",
+                    "protocol": "HTTP/1.1"
+                }
+            },
+            "source": {
+                "address": {
+                    "Address": {
+                        "SocketAddress": {
+                            "PortSpecifier": {
+                                "PortValue": 47500
+                            },
+                            "address": "10.244.0.9"
+                        }
+                    }
+                }
+            }
+        },
+        "parsed_body": {},
+        "parsed_path": [
+            "api",
+            "v1",
+            "sensitive"
+        ],
+        "parsed_query": {}
+    },
+    "labels": {
+        "app": "demo-server",
+        "id": "21174c96-2514-419b-b237-d7296b99e0ab",
+        "namespace": "default",
+        "platform": "kubernetes",
+        "version": "0.15.1-istio-2"
+    },
+    "level": "info",
+    "metrics": {
+        "timer_rego_query_eval_ns": 260700,
+        "timer_server_handler_ns": 333500
+    },
+    "msg": "Decision Log",
+    "path": "authorization/rest/allow",
+    "query": "data.authorization.rest.allow",
+    "requested_by": "",
+    "result": false,
+    "time": "2019-12-17T13:58:42Z",
+    "timestamp": "2019-12-17T13:58:42.7255098Z",
+    "type": "openpolicyagent.org/decision_logs"
+}

@@ -16,8 +16,9 @@ config = {
   },
   "plugins": {
     "envoy_ext_authz_grpc": {
-      "addr": ":9191",
-      "query": "data.envoy.authz.allow"
+      "addr": "0.0.0.0:9191",
+      "dry-run": false,
+      "query": "data.authorization.rest.allow"
     }
   }
 }

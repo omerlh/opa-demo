@@ -1,0 +1,14 @@
+{
+    "services": 
+    [
+        {
+            "client_id": "client",
+            "allowed_routes": [
+                {
+                    "path": "/api/v1/sensitive",
+                    "method": "GET"
+                }
+            ]
+        }
+    ]
+}
