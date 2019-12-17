@@ -1,4 +1,4 @@
 {
-  "revision" : "",
+  "revision" : "$revision",
   "roots": ["system/authz", "common/service2service"]
 }

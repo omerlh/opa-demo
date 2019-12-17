@@ -1,4 +1,4 @@
 {
-  "revision" : "",
+  "revision" : "$revision",
   "roots": ["authorization/rest", "services"]
 }
