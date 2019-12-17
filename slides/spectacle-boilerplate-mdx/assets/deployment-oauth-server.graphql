@@ -1,8 +1,0 @@
-mutation createDeployment {
-    createAppsV1NamespacedDeployment(namespace: "default", _26Input: "{\r\n  \"apiVersion\": \"apps\/v1\",\r\n  \"kind\": \"Deployment\",\r\n  \"metadata\": {\r\n    \"name\": \"oauth-server2\",\r\n    \"labels\": {\r\n      \"app\": \"oauth-server2\"\r\n    }\r\n  },\r\n  \"spec\": {\r\n    \"replicas\": 1,\r\n    \"selector\": {\r\n      \"matchLabels\": {\r\n        \"app\": \"oauth-server2\"\r\n      }\r\n    },\r\n    \"template\": {\r\n      \"metadata\": {\r\n        \"labels\": {\r\n          \"app\": \"oauth-server2\"\r\n        }\r\n      },\r\n      \"spec\": {\r\n        \"containers\": [\r\n          {\r\n            \"name\": \"oauth-server\",\r\n            \"image\": \"quay.io\/omerlh\/oauth-server:latest\",\r\n            \"imagePullPolicy\": \"Always\",\r\n            \"ports\": [\r\n              {\r\n                \"containerPort\": 9999\r\n              }\r\n            ]\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  }\r\n}")
-    {
-      metadata {
-        creationTimestamp
-      }
-    }
-  }
