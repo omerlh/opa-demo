@@ -1,0 +1,26 @@
+{
+    "decision_id": "44bcbf65-6f4c-48f8-8e34-afacaef931c0",
+    "input": {
+        "candies": 4,
+        "name": "maya"
+    },
+    "labels": {
+        "id": "e0da261b-34d2-46e1-8cab-f9a744f8eebb",
+        "version": "0.13.0"
+    },
+    "level": "info",
+    "metrics": {
+        "timer_rego_module_compile_ns": 536,
+        "timer_rego_module_parse_ns": 467,
+        "timer_rego_query_compile_ns": 465899,
+        "timer_rego_query_eval_ns": 90137,
+        "timer_rego_query_parse_ns": 630114,
+        "timer_server_handler_ns": 1235323
+    },
+    "msg": "Decision Log",
+    "path": "opa/demo/c/allow",
+    "requested_by": "127.0.0.1:58666",
+    "result": false,
+    "time": "2020-01-11T21:02:29+02:00",
+    "timestamp": "2020-01-11T19:02:29.29381Z"
+}
